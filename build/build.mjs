@@ -1,6 +1,8 @@
 import { context } from "esbuild";
-import { readdirSync } from "fs";
+import { cpSync, existsSync, readdirSync, rmSync } from "fs";
 import vencordDep from "./vencordDep.mjs";
+import Config from "../config.json" assert { type: "json" };
+import { join } from "path";
 
 const plugins = readdirSync("./plugins");
 
@@ -11,7 +13,7 @@ const contexts = await Promise.all(
     plugins.map(p =>
         context({
             entryPoints: [`./plugins/${p}`],
-            outfile: `dist/${p}/index.js`,
+            outfile: `dist/${p}.js`,
             format: "iife",
             globalName: "VencordPlugin",
             jsxFactory: "Vencord.Webpack.Common.React.createElement",
@@ -28,6 +30,33 @@ const contexts = await Promise.all(
     )
 );
 
+function deploy() {
+    const { autoDeploy, vencordDataDir } = Config;
+    if (!autoDeploy) return;
+
+    if (!existsSync(vencordDataDir)) {
+        console.warn("Vencord data directory does not exist:", vencordDataDir);
+        console.warn("Thus, deployment is skipped");
+        console.warn("You can fix this by editing config.json");
+        return;
+    }
+
+    if (autoDeploy && existsSync(vencordDataDir)) {
+        const pluginDir = join(vencordDataDir, "plugins");
+
+        rmSync(pluginDir, {
+            recursive: true,
+            force: true
+        });
+
+        cpSync("dist", pluginDir, {
+            recursive: true
+        });
+
+        console.log("Deployed Plugins to", pluginDir);
+    }
+}
+
 if (watch) {
     await Promise.all(contexts.map(ctx => ctx.watch()));
 } else {
@@ -37,4 +66,5 @@ if (watch) {
             await ctx.dispose();
         })
     );
+    deploy();
 }
