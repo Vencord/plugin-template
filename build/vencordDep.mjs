@@ -4,6 +4,7 @@ const names = {
     webpack: "Vencord.Webpack",
     "webpack/common": "Vencord.Webpack.Common",
     utils: "Vencord.Util",
+    "utils/types": "Vencord.Plugins.External",
     api: "Vencord.Api",
     components: "Vencord.Components"
 };
@@ -11,12 +12,6 @@ const names = {
 export default globalExternalsWithRegExp({
     getModuleInfo(modulePath) {
         const path = modulePath.replace("@vencord/types/", "");
-
-        if (path === "utils/types")
-            return {
-                varName: "Vencord.Plugins.External",
-                type: "cjs"
-            };
 
         let varName = names[path];
         if (!varName) {
@@ -29,10 +24,12 @@ export default globalExternalsWithRegExp({
                 // @ts-ignore
                 path.split("/")[1].replaceAll("/", ".");
         }
+
         return {
             varName,
             type: "cjs"
         };
     },
+
     modulePathFilter: /^@vencord\/types.+$/
 });
