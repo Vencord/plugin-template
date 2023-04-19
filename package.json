@@ -1,0 +1,24 @@
+{
+    "name": "MyVencordPlugins",
+    "author": "YourName",
+    "private": true,
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "node build/build.mjs",
+        "build:dev": "pnpm build --dev",
+        "build:watch": "pnpm build --dev --watch",
+        "format": "prettier --write ."
+    },
+    "keywords": [],
+    "license": "GPL-3.0",
+    "devDependencies": {
+        "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
+        "@types/node": "^18.15.11",
+        "@vencord/types": "^0.1.2",
+        "esbuild": "^0.17.17",
+        "prettier": "^2.8.7",
+        "typescript": "^5.0.4"
+    }
+}

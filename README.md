@@ -1,0 +1,1 @@
+# Vencord Plugin Template
