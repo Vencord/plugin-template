@@ -13,15 +13,17 @@ const contexts = await Promise.all(
             entryPoints: [`./plugins/${p}`],
             outfile: `dist/${p}/index.js`,
             format: "iife",
-            jsxFactory: "VCR.createElement",
-            jsxFragment: "VCR.Fragment",
+            globalName: "VencordPlugin",
+            jsxFactory: "Vencord.Webpack.Common.React.createElement",
+            jsxFragment: "Vencord.Webpack.Common.React.Fragment",
             external: ["@vencord/types/*"],
             plugins: [vencordDep],
-            footer: { js: `//# sourceURL=${encodeURI(p)}` },
+            footer: { js: `return VencordPlugin;\n//# sourceURL=${encodeURI(p)}` },
             minify: !isDev,
             bundle: true,
             sourcemap: "linked",
-            logLevel: "info"
+            logLevel: "info",
+            tsconfig: "./build/tsconfig.json"
         })
     )
 );

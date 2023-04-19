@@ -4,7 +4,6 @@ const names = {
     webpack: "Vencord.Webpack",
     "webpack/common": "Vencord.Webpack.Common",
     utils: "Vencord.Util",
-    "utils/types": "Vencord.Plugins.External",
     api: "Vencord.Api",
     components: "Vencord.Components"
 };
@@ -15,14 +14,11 @@ export default globalExternalsWithRegExp({
 
         let varName = names[path];
         if (!varName) {
-            const altMapping = names[path.split("/")[0]];
-            if (!altMapping) throw new Error("Unknown module path: " + modulePath);
+            const elements = path.split("/");
+            varName = names[elements.shift()];
+            if (!varName) throw new Error("Unknown module path: " + modulePath);
 
-            varName =
-                altMapping +
-                "." +
-                // @ts-ignore
-                path.split("/")[1].replaceAll("/", ".");
+            if (varName !== "Vencord.Util" || elements[0] === "types") varName += "." + elements.join(".");
         }
 
         return {
